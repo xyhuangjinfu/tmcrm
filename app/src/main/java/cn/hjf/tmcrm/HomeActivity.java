@@ -1,5 +1,6 @@
 package cn.hjf.tmcrm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -18,7 +19,7 @@ public class HomeActivity extends BaseActivity {
 		mBtnCreate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				startActivity(new Intent(HomeActivity.this, EditActivity.class));
 			}
 		});
 	}
