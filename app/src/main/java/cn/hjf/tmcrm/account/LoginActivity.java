@@ -21,6 +21,14 @@ public class LoginActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
+		mBtnLogin = findViewById(R.id.btn_login);
+		mBtnLogin.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
 		mBtnRegister = findViewById(R.id.btn_register);
 		mBtnRegister.setOnClickListener(new View.OnClickListener() {
 			@Override
