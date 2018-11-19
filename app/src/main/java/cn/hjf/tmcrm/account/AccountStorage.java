@@ -51,6 +51,28 @@ public class AccountStorage extends BaseStorage {
 		});
 	}
 
+	public void queryAccount(String account, String pwd, final IStorageCallback<Account> callback) {
+		AVQuery<AVObject> avQuery = new AVQuery<>("Account");
+		avQuery.whereEqualTo("account", account);
+		avQuery.whereEqualTo("pwd", pwd);
+		avQuery.findInBackground(new FindCallback<AVObject>() {
+			@Override
+			public void done(List<AVObject> list, AVException e) {
+				if (callback != null) {
+					if (e == null) {
+						if (list == null || list.isEmpty()) {
+							callback.onSuccess(null);
+						} else {
+							callback.onSuccess(transfer(list.get(0)));
+						}
+					} else {
+						callback.onFail(e);
+					}
+				}
+			}
+		});
+	}
+
 	private AVObject transfer(@NonNull Account account) {
 		AVObject avObject = new AVObject("Account");
 		avObject.put("account", account.getAccount());
