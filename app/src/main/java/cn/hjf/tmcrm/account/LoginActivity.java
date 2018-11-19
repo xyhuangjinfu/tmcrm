@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import cn.hjf.tmcrm.BaseActivity;
+import cn.hjf.tmcrm.HomeActivity;
 import cn.hjf.tmcrm.R;
 import cn.hjf.tmcrm.storage.IStorageCallback;
 
@@ -78,6 +79,8 @@ public class LoginActivity extends BaseActivity {
 				if (data != null) {
 					Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
 					finish();
+
+					startActivity(new Intent(LoginActivity.this, HomeActivity.class));
 				} else {
 					Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
 				}
