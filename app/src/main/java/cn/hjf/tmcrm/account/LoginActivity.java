@@ -36,10 +36,14 @@ public class LoginActivity extends BaseActivity {
 		mBtnLogin.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Account account = createAccount();
-				if (account != null) {
-					queryAccount(account);
-				}
+//				Account account = createAccount();
+//				if (account != null) {
+//					queryAccount(account);
+//				}
+
+				finish();
+
+				startActivity(new Intent(LoginActivity.this, HomeActivity.class));
 			}
 		});
 
