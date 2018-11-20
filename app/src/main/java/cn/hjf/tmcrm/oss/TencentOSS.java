@@ -11,6 +11,7 @@ import com.tencent.cos.xml.listener.CosXmlProgressListener;
 import com.tencent.cos.xml.listener.CosXmlResultListener;
 import com.tencent.cos.xml.model.CosXmlRequest;
 import com.tencent.cos.xml.model.CosXmlResult;
+import com.tencent.cos.xml.model.object.DeleteObjectRequest;
 import com.tencent.cos.xml.model.object.GetObjectRequest;
 import com.tencent.cos.xml.model.object.PutObjectRequest;
 import com.tencent.qcloud.core.auth.QCloudCredentialProvider;
@@ -121,6 +122,35 @@ public class TencentOSS {
 			}
 		});
 
+	}
+
+	public void deleteObject(String url, final IDeleteObjectCallback callback) {
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(BUCKET, getCosPath(url));
+
+		// 使用异步回调请求
+		mCosXmlService.deleteObjectAsync(deleteObjectRequest, new CosXmlResultListener() {
+			@Override
+			public void onSuccess(CosXmlRequest cosXmlRequest, CosXmlResult cosXmlResult) {
+				if (callback != null) {
+					callback.onSuccess();
+				}
+			}
+
+			@Override
+			public void onFail(CosXmlRequest cosXmlRequest, CosXmlClientException clientException, CosXmlServiceException serviceException) {
+				if (callback != null) {
+					if (clientException != null) {
+						callback.onFail(clientException);
+						return;
+					}
+
+					if (serviceException != null) {
+						callback.onFail(serviceException);
+						return;
+					}
+				}
+			}
+		});
 	}
 
 	//-----------------------------------------------------------------------------------------------------------------------

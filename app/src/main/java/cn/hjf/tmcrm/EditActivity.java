@@ -2,14 +2,20 @@ package cn.hjf.tmcrm;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
-import cn.hjf.tmcrm.customer.CustomerInfoView;
-import cn.hjf.tmcrm.customer.UploadIdCardImageTask;
+import cn.hjf.tmcrm.customer.*;
 import cn.hjf.tmcrm.oss.TencentOSS;
 import cn.hjf.tmcrm.storage.FileStorage;
+import cn.hjf.tmcrm.storage.IStorageCallback;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class EditActivity extends BaseActivity {
 
@@ -20,9 +26,17 @@ public class EditActivity extends BaseActivity {
 	private FileStorage mFileStorage;
 	private TencentOSS mTencentOSS;
 
-	private ProgressDialog mProgressDialog;
+	private ProgressDialog mHorizontalProgressDialog;
+	private ProgressDialog mCircleProgressDialog;
 
 	private UploadIdCardImageTask mUploadIdCardImageTask;
+	private DeleteIdCardImageTask mDeleteIdCardImageTask;
+
+	private Customer mCustomer = new Customer();
+
+	private CustomerStorage mCustomerStorage;
+
+	private Button mBtnSubmit;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,9 +47,13 @@ public class EditActivity extends BaseActivity {
 
 		mTencentOSS = new TencentOSS(this);
 
-		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mProgressDialog.setMax(100);
+		mCustomerStorage = new CustomerStorage(this);
+
+		mHorizontalProgressDialog = new ProgressDialog(this);
+		mHorizontalProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		mHorizontalProgressDialog.setMax(100);
+
+		mCircleProgressDialog = new ProgressDialog(this);
 
 		mCustomerInfoView = new CustomerInfoView(this, findViewById(R.id.layout_customer_info));
 		mCustomerInfoView.setEventListener(new CustomerInfoView.EventListener() {
@@ -44,6 +62,91 @@ public class EditActivity extends BaseActivity {
 				Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 				i.setType("image/*");
 				startActivityForResult(Intent.createChooser(i, "选择身份证照片"), REQ_CHOOSE_ID_CARD_IMAGE);
+			}
+
+			@Override
+			public void onClickImage(Image image) {
+				//预览
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+				File imageFile = new File(image.getLocalPath());
+				Uri imageUri = FileProvider.getUriForFile(EditActivity.this, EditActivity.this.getApplicationContext().getPackageName() + ".provider", imageFile);
+
+				intent.setDataAndType(imageUri, "image/*");
+				startActivity(intent);
+			}
+
+			@Override
+			public void onDeleteImage(final Image image) {
+				//删除
+				mDeleteIdCardImageTask = new DeleteIdCardImageTask(EditActivity.this);
+				mDeleteIdCardImageTask.setCallback(new DeleteIdCardImageTask.Callback() {
+					@Override
+					public void onStart() {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mCircleProgressDialog.show();
+							}
+						});
+					}
+
+					@Override
+					public void onSuccess() {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mCircleProgressDialog.cancel();
+
+								mCustomer.getIdCardImageList().remove(image);
+								mCustomerInfoView.renderCustomer(mCustomer);
+							}
+						});
+					}
+
+					@Override
+					public void onFail(final Throwable error) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mCircleProgressDialog.cancel();
+								Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+							}
+						});
+					}
+				});
+				mDeleteIdCardImageTask.execute(image);
+			}
+		});
+
+		mBtnSubmit = findViewById(R.id.btn_submit);
+		mBtnSubmit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mCircleProgressDialog.show();
+				mCustomerStorage.saveCustomer(mCustomer, new IStorageCallback<Customer>() {
+					@Override
+					public void onSuccess(@Nullable Customer data) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mCircleProgressDialog.cancel();
+							}
+						});
+					}
+
+					@Override
+					public void onFail(@Nullable final Throwable error) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mCircleProgressDialog.cancel();
+								Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+							}
+						});
+					}
+				});
 			}
 		});
 	}
@@ -66,7 +169,7 @@ public class EditActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mProgressDialog.show();
+						mHorizontalProgressDialog.show();
 					}
 				});
 			}
@@ -76,8 +179,13 @@ public class EditActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mProgressDialog.cancel();
-						mCustomerInfoView.renderIdCard(image);
+						mHorizontalProgressDialog.cancel();
+
+						if (mCustomer.getIdCardImageList() == null) {
+							mCustomer.setIdCardImageList(new ArrayList<Image>());
+						}
+						mCustomer.getIdCardImageList().add(image);
+						mCustomerInfoView.renderCustomer(mCustomer);
 					}
 				});
 			}
@@ -87,7 +195,7 @@ public class EditActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mProgressDialog.cancel();
+						mHorizontalProgressDialog.cancel();
 						Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -98,8 +206,8 @@ public class EditActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mProgressDialog.setMax(max);
-						mProgressDialog.setProgress(progress);
+						mHorizontalProgressDialog.setMax(max);
+						mHorizontalProgressDialog.setProgress(progress);
 					}
 				});
 			}
@@ -113,16 +221,16 @@ public class EditActivity extends BaseActivity {
 //			return;
 //		}
 //		//上传到云存储
-//		mProgressDialog.show();
+//		mHorizontalProgressDialog.show();
 //		new TencentOSS(this).putObject(path, UUID.randomUUID().toString(), new IPutObjectCallback() {
 //			@Override
 //			public void onProgress(long progress, long max) {
-//				mProgressDialog.setProgress((int) (100.0 * progress / max));
+//				mHorizontalProgressDialog.setProgress((int) (100.0 * progress / max));
 //			}
 //
 //			@Override
 //			public void onSuccess(String objectUrl) {
-//				mProgressDialog.cancel();
+//				mHorizontalProgressDialog.cancel();
 //
 //				//更新本地文件名称
 //				String realPath = FileStorage.PATH_ID_CARD_IMAGE + "/" + FileStorage.getFileNameFromUrl(objectUrl);
@@ -137,7 +245,7 @@ public class EditActivity extends BaseActivity {
 //
 //			@Override
 //			public void onFail(Throwable error) {
-//				mProgressDialog.cancel();
+//				mHorizontalProgressDialog.cancel();
 //
 //				Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
 //			}

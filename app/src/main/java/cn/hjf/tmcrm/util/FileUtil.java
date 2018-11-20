@@ -73,4 +73,9 @@ public final class FileUtil {
 		File file = new File(oldPath);
 		return file.renameTo(new File(newPath));
 	}
+
+	public static boolean delete(String path) {
+		File file = new File(path);
+		return file.delete();
+	}
 }

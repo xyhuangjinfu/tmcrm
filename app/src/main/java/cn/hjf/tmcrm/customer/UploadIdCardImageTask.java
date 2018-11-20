@@ -39,11 +39,6 @@ public class UploadIdCardImageTask extends AsyncTask<Uri, Integer, Void> {
 	}
 
 	@Override
-	protected void onPreExecute() {
-
-	}
-
-	@Override
 	protected Void doInBackground(Uri... uris) {
 		//启动
 		if (mCallback != null) {

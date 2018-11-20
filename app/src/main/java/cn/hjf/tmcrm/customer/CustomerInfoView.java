@@ -1,9 +1,8 @@
 package cn.hjf.tmcrm.customer;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v4.content.FileProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +10,6 @@ import cn.hjf.tmcrm.Image;
 import cn.hjf.tmcrm.R;
 import cn.hjf.tmcrm.widget.ExpandAllGridView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +17,10 @@ public class CustomerInfoView {
 
 	public interface EventListener {
 		void onChooseImage();
+
+		void onClickImage(Image image);
+
+		void onDeleteImage(Image image);
 	}
 
 	private final Context mContext;
@@ -33,6 +35,8 @@ public class CustomerInfoView {
 
 	private EventListener mEventListener;
 
+	private Customer mCustomer;
+
 	public CustomerInfoView(Context context, View rootView) {
 		mContext = context;
 		mRootView = rootView;
@@ -42,7 +46,39 @@ public class CustomerInfoView {
 
 	private void init() {
 		mEtName = mRootView.findViewById(R.id.et_customer_name);
+		mEtName.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				if (mCustomer != null) {
+					mCustomer.setName(mEtName.getText().toString());
+				}
+			}
+		});
 		mEtId = mRootView.findViewById(R.id.et_customer_id);
+		mEtId.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				if (mCustomer != null) {
+					mCustomer.setId(mEtId.getText().toString());
+				}
+			}
+		});
 
 		mEgvIdCardImage = mRootView.findViewById(R.id.egv_customer_id_card);
 		mImageList = new ArrayList<>();
@@ -51,19 +87,17 @@ public class CustomerInfoView {
 		mImageAdapter.setOnEventListener(new IdCardImageAdapter.OnEventListener() {
 			@Override
 			public void onClick(int position) {
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				if (mEventListener != null) {
+					mEventListener.onClickImage(mImageList.get(position));
+				}
 
-				File imageFile = new File(mImageList.get(position).getLocalPath());
-				Uri imageUri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", imageFile);
-
-				intent.setDataAndType(imageUri, "image/*");
-				mContext.startActivity(intent);
 			}
 
 			@Override
 			public void onDelete(int position) {
-
+				if (mEventListener != null) {
+					mEventListener.onDeleteImage(mImageList.get(position));
+				}
 			}
 		});
 
@@ -86,13 +120,15 @@ public class CustomerInfoView {
 		mEventListener = eventListener;
 	}
 
-	public void renderIdCard(Image image) {
-		mImageList.add(image);
-		mImageAdapter.notifyDataSetChanged();
-	}
-
 	public void renderCustomer(Customer customer) {
+		mCustomer = customer;
 
+		mImageList.clear();
+		mImageList.addAll(customer.getIdCardImageList());
+		mImageAdapter.notifyDataSetChanged();
+
+		mEtName.setText(customer.getName());
+		mEtId.setText(customer.getId());
 	}
 
 }
