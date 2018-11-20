@@ -2,17 +2,14 @@ package cn.hjf.tmcrm;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import cn.hjf.tmcrm.attachment.Attachment;
 import cn.hjf.tmcrm.attachment.AttachmentViewer;
-import cn.hjf.tmcrm.attachment.DeleteIdAttachmentTask;
-import cn.hjf.tmcrm.attachment.UploadAttachmentTask;
 import cn.hjf.tmcrm.customer.Customer;
 import cn.hjf.tmcrm.customer.CustomerInfoView;
 import cn.hjf.tmcrm.customer.CustomerStorage;
@@ -20,9 +17,6 @@ import cn.hjf.tmcrm.order.OrderInfoView;
 import cn.hjf.tmcrm.oss.TencentOSS;
 import cn.hjf.tmcrm.storage.FileStorage;
 import cn.hjf.tmcrm.storage.IStorageCallback;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class EditActivity extends BaseActivity {
 
@@ -37,8 +31,8 @@ public class EditActivity extends BaseActivity {
 	private ProgressDialog mHorizontalProgressDialog;
 	private ProgressDialog mCircleProgressDialog;
 
-	private UploadAttachmentTask mUploadAttachmentTask;
-	private DeleteIdAttachmentTask mDeleteIdAttachmentTask;
+//	private UploadAttachmentTask mUploadAttachmentTask;
+//	private DeleteIdAttachmentTask mDeleteIdAttachmentTask;
 
 	private Customer mCustomer = new Customer();
 
@@ -84,44 +78,44 @@ public class EditActivity extends BaseActivity {
 
 			@Override
 			public void onDeleteAttachment(final Attachment attachment) {
-				//删除
-				mDeleteIdAttachmentTask = new DeleteIdAttachmentTask(EditActivity.this);
-				mDeleteIdAttachmentTask.setCallback(new DeleteIdAttachmentTask.Callback() {
-					@Override
-					public void onStart() {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								mCircleProgressDialog.show();
-							}
-						});
-					}
-
-					@Override
-					public void onSuccess() {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								mCircleProgressDialog.cancel();
-
-								mCustomer.getIdCardImageList().remove(attachment);
-								mCustomerInfoView.renderCustomer(mCustomer);
-							}
-						});
-					}
-
-					@Override
-					public void onFail(final Throwable error) {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								mCircleProgressDialog.cancel();
-								Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-							}
-						});
-					}
-				});
-				mDeleteIdAttachmentTask.execute(attachment);
+//				//删除
+//				mDeleteIdAttachmentTask = new DeleteIdAttachmentTask(EditActivity.this);
+//				mDeleteIdAttachmentTask.setCallback(new DeleteIdAttachmentTask.Callback() {
+//					@Override
+//					public void onStart() {
+//						runOnUiThread(new Runnable() {
+//							@Override
+//							public void run() {
+//								mCircleProgressDialog.show();
+//							}
+//						});
+//					}
+//
+//					@Override
+//					public void onSuccess() {
+//						runOnUiThread(new Runnable() {
+//							@Override
+//							public void run() {
+//								mCircleProgressDialog.cancel();
+//
+//								mCustomer.getIdCardImageList().remove(attachment);
+//								mCustomerInfoView.renderCustomer(mCustomer);
+//							}
+//						});
+//					}
+//
+//					@Override
+//					public void onFail(final Throwable error) {
+//						runOnUiThread(new Runnable() {
+//							@Override
+//							public void run() {
+//								mCircleProgressDialog.cancel();
+//								Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+//							}
+//						});
+//					}
+//				});
+//				mDeleteIdAttachmentTask.execute(attachment);
 			}
 		});
 
@@ -206,62 +200,62 @@ public class EditActivity extends BaseActivity {
 	}
 
 	private void handleChooseIdCardImage(final int requestCode, Intent data) {
-		mUploadAttachmentTask = new UploadAttachmentTask(this);
-		mUploadAttachmentTask.setCallback(new UploadAttachmentTask.Callback() {
-			@Override
-			public void onStart() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						mHorizontalProgressDialog.show();
-					}
-				});
-			}
-
-			@Override
-			public void onSuccess(final Attachment attachment) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						mHorizontalProgressDialog.cancel();
-
-						if (requestCode == REQ_CHOOSE_ID_CARD_IMAGE) {
-							if (mCustomer.getIdCardImageList() == null) {
-								mCustomer.setIdCardImageList(new ArrayList<Attachment>());
-							}
-							mCustomer.getIdCardImageList().add(attachment);
-							mCustomerInfoView.renderCustomer(mCustomer);
-						} else if (requestCode == REQ_CHOOSE_ORDER_ATTACHMENT) {
-
-						}
-
-					}
-				});
-			}
-
-			@Override
-			public void onFail(final Throwable error) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						mHorizontalProgressDialog.cancel();
-						Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-					}
-				});
-			}
-
-			@Override
-			public void onProgress(final int progress, final int max) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						mHorizontalProgressDialog.setMax(max);
-						mHorizontalProgressDialog.setProgress(progress);
-					}
-				});
-			}
-		});
-		mUploadAttachmentTask.execute(data);
+//		mUploadAttachmentTask = new UploadAttachmentTask(this);
+//		mUploadAttachmentTask.setCallback(new UploadAttachmentTask.Callback() {
+//			@Override
+//			public void onStart() {
+//				runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						mHorizontalProgressDialog.show();
+//					}
+//				});
+//			}
+//
+//			@Override
+//			public void onSuccess(final Attachment attachment) {
+//				runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						mHorizontalProgressDialog.cancel();
+//
+//						if (requestCode == REQ_CHOOSE_ID_CARD_IMAGE) {
+//							if (mCustomer.getIdCardImageList() == null) {
+//								mCustomer.setIdCardImageList(new ArrayList<Attachment>());
+//							}
+//							mCustomer.getIdCardImageList().add(attachment);
+//							mCustomerInfoView.renderCustomer(mCustomer);
+//						} else if (requestCode == REQ_CHOOSE_ORDER_ATTACHMENT) {
+//
+//						}
+//
+//					}
+//				});
+//			}
+//
+//			@Override
+//			public void onFail(final Throwable error) {
+//				runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						mHorizontalProgressDialog.cancel();
+//						Toast.makeText(EditActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+//					}
+//				});
+//			}
+//
+//			@Override
+//			public void onProgress(final int progress, final int max) {
+//				runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						mHorizontalProgressDialog.setMax(max);
+//						mHorizontalProgressDialog.setProgress(progress);
+//					}
+//				});
+//			}
+//		});
+//		mUploadAttachmentTask.execute(data);
 	}
 
 }

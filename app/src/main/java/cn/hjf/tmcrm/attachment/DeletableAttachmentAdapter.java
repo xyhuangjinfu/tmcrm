@@ -1,16 +1,25 @@
 package cn.hjf.tmcrm.attachment;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v4.content.MimeTypeFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import cn.hjf.tmcrm.R;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
+
+import cn.hjf.tmcrm.R;
 
 public class DeletableAttachmentAdapter extends BaseAdapter {
 
@@ -75,15 +84,33 @@ public class DeletableAttachmentAdapter extends BaseAdapter {
 			}
 		});
 
+		Log.e("O_O", position + " -> " + mAttachmentList.get(position).getMimeType() + " - " + vh.mIvPic);
+
 		render(vh, mAttachmentList.get(position));
 
 		return convertView;
 	}
 
-	private void render(VH vh, Attachment attachment) {
+	private void render(final VH vh, final Attachment attachment) {
+		vh.mIvPic.setTag(vh.mIvPic.getId(), attachment.getFilePath());
+
 		if (MimeTypeFilter.matches(attachment.getMimeType(), "image/*")) {
 			Glide.with(mContext)
 					.load(attachment.getFilePath())
+					.addListener(new RequestListener<Drawable>() {
+						@Override
+						public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+							return false;
+						}
+
+						@Override
+						public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+							if (vh.mIvPic.getTag(vh.mIvPic.getId()).equals(attachment.getFilePath())) {
+								vh.mIvPic.setImageDrawable(resource);
+							}
+							return true;
+						}
+					})
 					.into(vh.mIvPic);
 			return;
 		}
