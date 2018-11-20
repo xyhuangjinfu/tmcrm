@@ -6,14 +6,19 @@
         android:layout_height="match_parent">
 
     <Button
+            android:id="@+id/btn_create_customer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="新建客户"/>
+
+    <Button
             android:id="@+id/btn_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="新建"/>
 
-
     <ImageView android:layout_width="match_parent"
                android:layout_height="match_parent"
-    android:id="@+id/iv_test"/>
+               android:id="@+id/iv_test"/>
 
 </LinearLayout>

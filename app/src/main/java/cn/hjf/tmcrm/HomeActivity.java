@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import com.bumptech.glide.Glide;
+import cn.hjf.tmcrm.customer.CustomerEditActivity;
 
 public class HomeActivity extends BaseActivity {
 
 	private Button mBtnCreate;
+	private Button mBtnCreateCustomer;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,9 +25,13 @@ public class HomeActivity extends BaseActivity {
 			}
 		});
 
-
-
-
+		mBtnCreateCustomer = findViewById(R.id.btn_create_customer);
+		mBtnCreateCustomer.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(HomeActivity.this, CustomerEditActivity.class));
+			}
+		});
 
 //		ImageView imageView = (ImageView) findViewById(R.id.iv_test);
 //

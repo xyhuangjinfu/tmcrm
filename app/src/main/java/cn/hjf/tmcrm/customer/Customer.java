@@ -7,9 +7,18 @@ import java.util.List;
 
 public class Customer extends BizModel {
 
+	private String mUuid;
 	private String mName;
 	private String mId;
 	private List<Attachment> mIdCardImageList;
+
+	public String getUuid() {
+		return mUuid;
+	}
+
+	public void setUuid(String uuid) {
+		mUuid = uuid;
+	}
 
 	public String getName() {
 		return mName;
