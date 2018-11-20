@@ -84,7 +84,7 @@ public class UploadAttachmentTask extends AsyncTask<Intent, Integer, Void> {
 				}
 
 				Attachment attachment = new Attachment();
-				attachment.setUrl(objectUrl);
+//				attachment.setUrl(objectUrl);
 				attachment.setFilePath(realPath);
 				attachment.setMimeType(mimeType);
 				if (mCallback != null) {

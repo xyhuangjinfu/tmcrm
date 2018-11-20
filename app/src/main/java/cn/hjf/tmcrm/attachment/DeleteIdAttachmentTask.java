@@ -41,21 +41,21 @@ public class DeleteIdAttachmentTask extends AsyncTask<Attachment, Void, Void> {
 
 		FileUtil.delete(attachment.getFilePath());
 
-		mTencentOSS.deleteObject(attachment.getUrl(), new IDeleteObjectCallback() {
-			@Override
-			public void onSuccess() {
-				if (mCallback != null) {
-					mCallback.onSuccess();
-				}
-			}
-
-			@Override
-			public void onFail(Throwable error) {
-				if (mCallback != null) {
-					mCallback.onFail(error);
-				}
-			}
-		});
+//		mTencentOSS.deleteObject(attachment.getUrl(), new IDeleteObjectCallback() {
+//			@Override
+//			public void onSuccess() {
+//				if (mCallback != null) {
+//					mCallback.onSuccess();
+//				}
+//			}
+//
+//			@Override
+//			public void onFail(Throwable error) {
+//				if (mCallback != null) {
+//					mCallback.onFail(error);
+//				}
+//			}
+//		});
 
 		return null;
 	}

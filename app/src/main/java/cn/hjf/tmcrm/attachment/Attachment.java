@@ -4,31 +4,33 @@ import cn.hjf.tmcrm.BizModel;
 
 public class Attachment extends BizModel {
 
-	private String mUrl;
-	private String mFilePath;
-	private String mMimeType;
+	private String uuid;
 
-	public String getUrl() {
-		return mUrl;
+	private String filePath;
+
+	private String mimeType;
+
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setUrl(String url) {
-		mUrl = url;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getFilePath() {
-		return mFilePath;
+		return filePath;
 	}
 
 	public void setFilePath(String filePath) {
-		mFilePath = filePath;
+		this.filePath = filePath;
 	}
 
 	public String getMimeType() {
-		return mMimeType;
+		return mimeType;
 	}
 
 	public void setMimeType(String mimeType) {
-		mMimeType = mimeType;
+		this.mimeType = mimeType;
 	}
 }

@@ -73,7 +73,7 @@ public class CustomerStorage extends BaseStorage {
 		if (customer.getIdCardImageList() != null) {
 			List<String> imageUrlList = new ArrayList<>();
 			for (Attachment attachment : customer.getIdCardImageList()) {
-				imageUrlList.add(attachment.getUrl());
+//				imageUrlList.add(attachment.getUrl());
 			}
 			avObject.put("id_image_urls", imageUrlList);
 		}
@@ -92,7 +92,7 @@ public class CustomerStorage extends BaseStorage {
 			List<Attachment> attachmentList = new ArrayList<>();
 			for (String s : l) {
 				Attachment a = new Attachment();
-				a.setUrl(s);
+//				a.setUrl(s);
 
 			}
 			customer.setIdCardImageList(attachmentList);
