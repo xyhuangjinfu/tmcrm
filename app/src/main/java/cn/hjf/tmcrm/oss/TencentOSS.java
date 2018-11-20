@@ -23,6 +23,8 @@ public class TencentOSS {
 	private static final String REGION = "ap-shanghai";
 	private static final String SECRET_ID = "AKID6FQSJIKqLiz5znhyMdjdMzSnxvkOODZo";
 	private static final String SECRET_KEY = "D8uU7c1FIAqKIBuRnyzpaAYklcI0c3IR";
+
+	private static final String SCHEMA = "https://";
 	private static final String DOMAIN = "https://tmcrm-1258098598.cos.ap-shanghai.myqcloud.com/";
 
 	private Context mContext;
@@ -44,13 +46,15 @@ public class TencentOSS {
 		mCosXmlService = new CosXmlService(context, serviceConfig, credentialProvider);
 	}
 
-	public void putObject(String path, final ITencentOssCallback ossCallback) {
-		PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, "张三/1", path);
+	public void putObject(String filePath, String cosPath, final IPutObjectCallback callback) {
+		PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET, cosPath, filePath);
 
 		putObjectRequest.setProgressListener(new CosXmlProgressListener() {
 			@Override
 			public void onProgress(long progress, long max) {
-				Log.e("O_O", progress + "/" + max);
+				if (callback != null) {
+					callback.onProgress(progress, max);
+				}
 			}
 		});
 
@@ -58,25 +62,25 @@ public class TencentOSS {
 		mCosXmlService.putObjectAsync(putObjectRequest, new CosXmlResultListener() {
 			@Override
 			public void onSuccess(CosXmlRequest cosXmlRequest, CosXmlResult cosXmlResult) {
-				// todo Put object success...
-
-				String path = mCosXmlService.getAccessUrl(cosXmlRequest);
-
-				Log.e("O_O", "success");
+				if (callback != null) {
+					callback.onSuccess(getUrl(cosXmlResult.accessUrl));
+				}
 			}
 
 			@Override
 			public void onFail(CosXmlRequest cosXmlRequest, CosXmlClientException clientException, CosXmlServiceException serviceException) {
-				// todo Put object failed because of CosXmlClientException or CosXmlServiceException...
-				Log.e("O_O", "onFail");
+				if (callback != null) {
+					if (clientException != null) {
+						callback.onFail(clientException);
+						return;
+					}
 
-				if (clientException != null) {
-					clientException.printStackTrace();
+					if (serviceException != null) {
+						callback.onFail(serviceException);
+						return;
+					}
 				}
 
-				if (serviceException != null) {
-					serviceException.printStackTrace();
-				}
 			}
 		});
 
@@ -117,5 +121,16 @@ public class TencentOSS {
 			}
 		});
 
+	}
+
+	//-----------------------------------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------------
+
+	private String getUrl(String accessUrl) {
+		return SCHEMA + accessUrl;
+	}
+
+	private String getCosPath(String url) {
+		return url.replace(DOMAIN, "");
 	}
 }

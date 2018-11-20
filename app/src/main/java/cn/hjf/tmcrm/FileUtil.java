@@ -1,14 +1,8 @@
 package cn.hjf.tmcrm;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public final class FileUtil {
 
@@ -73,5 +67,10 @@ public final class FileUtil {
 		}
 
 		return true;
+	}
+
+	public static boolean rename(String oldPath, String newPath) {
+		File file = new File(oldPath);
+		return file.renameTo(new File(newPath));
 	}
 }
