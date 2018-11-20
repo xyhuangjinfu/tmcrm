@@ -29,10 +29,10 @@ public class HomeActivity extends BaseActivity {
 
 
 
-		ImageView imageView = (ImageView) findViewById(R.id.iv_test);
-
-		Glide.with(this)
-				.load("https://tmcrm-1258098598.cos.ap-shanghai.myqcloud.com/%E5%BC%A0%E4%B8%89/1")
-				.into(imageView);
+//		ImageView imageView = (ImageView) findViewById(R.id.iv_test);
+//
+//		Glide.with(this)
+//				.load("https://tmcrm-1258098598.cos.ap-shanghai.myqcloud.com/%E5%BC%A0%E4%B8%89/1")
+//				.into(imageView);
 	}
 }

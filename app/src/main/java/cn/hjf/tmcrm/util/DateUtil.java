@@ -1,4 +1,4 @@
-package cn.hjf.tmcrm;
+package cn.hjf.tmcrm.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

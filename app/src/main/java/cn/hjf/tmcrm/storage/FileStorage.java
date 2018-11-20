@@ -3,7 +3,7 @@ package cn.hjf.tmcrm.storage;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import cn.hjf.tmcrm.FileUtil;
+import cn.hjf.tmcrm.util.FileUtil;
 
 import java.io.InputStream;
 
