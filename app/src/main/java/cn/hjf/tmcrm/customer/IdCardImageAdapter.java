@@ -17,9 +17,11 @@ public class IdCardImageAdapter extends BaseAdapter {
 	private Context mContext;
 	private List<Image> mImageList;
 
-	private OnDeleteListener mOnDeleteListener;
+	private OnEventListener mOnEventListener;
 
-	public interface OnDeleteListener {
+	public interface OnEventListener {
+		void onClick(int position);
+
 		void onDelete(int position);
 	}
 
@@ -58,8 +60,17 @@ public class IdCardImageAdapter extends BaseAdapter {
 		vh.mIvDelete.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (mOnDeleteListener != null) {
-					mOnDeleteListener.onDelete(position);
+				if (mOnEventListener != null) {
+					mOnEventListener.onDelete(position);
+				}
+			}
+		});
+
+		vh.mIvPic.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mOnEventListener != null) {
+					mOnEventListener.onClick(position);
 				}
 			}
 		});
@@ -81,7 +92,7 @@ public class IdCardImageAdapter extends BaseAdapter {
 		}
 	}
 
-	public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
-		mOnDeleteListener = onDeleteListener;
+	public void setOnEventListener(OnEventListener onEventListener) {
+		mOnEventListener = onEventListener;
 	}
 }
