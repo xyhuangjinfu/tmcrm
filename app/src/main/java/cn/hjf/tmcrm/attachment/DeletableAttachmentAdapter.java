@@ -1,21 +1,21 @@
-package cn.hjf.tmcrm.customer;
+package cn.hjf.tmcrm.attachment;
 
 import android.content.Context;
+import android.support.v4.content.MimeTypeFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import cn.hjf.tmcrm.Image;
 import cn.hjf.tmcrm.R;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class IdCardImageAdapter extends BaseAdapter {
+public class DeletableAttachmentAdapter extends BaseAdapter {
 
 	private Context mContext;
-	private List<Image> mImageList;
+	private List<Attachment> mAttachmentList;
 
 	private OnEventListener mOnEventListener;
 
@@ -25,19 +25,19 @@ public class IdCardImageAdapter extends BaseAdapter {
 		void onDelete(int position);
 	}
 
-	public IdCardImageAdapter(Context context, List<Image> imageList) {
+	public DeletableAttachmentAdapter(Context context, List<Attachment> attachmentList) {
 		mContext = context;
-		mImageList = imageList;
+		mAttachmentList = attachmentList;
 	}
 
 	@Override
 	public int getCount() {
-		return mImageList == null ? 0 : mImageList.size();
+		return mAttachmentList == null ? 0 : mAttachmentList.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return mImageList.get(position);
+		return mAttachmentList.get(position);
 	}
 
 	@Override
@@ -75,11 +75,23 @@ public class IdCardImageAdapter extends BaseAdapter {
 			}
 		});
 
-		Glide.with(mContext)
-				.load(mImageList.get(position).getLocalPath())
-				.into(vh.mIvPic);
+		render(vh, mAttachmentList.get(position));
 
 		return convertView;
+	}
+
+	private void render(VH vh, Attachment attachment) {
+		if (MimeTypeFilter.matches(attachment.getMimeType(), "image/*")) {
+			Glide.with(mContext)
+					.load(attachment.getFilePath())
+					.into(vh.mIvPic);
+			return;
+		}
+
+		if (MimeTypeFilter.matches(attachment.getMimeType(), "application/pdf")) {
+			vh.mIvPic.setImageResource(R.drawable.icon_pdf);
+			return;
+		}
 	}
 
 	private static class VH {

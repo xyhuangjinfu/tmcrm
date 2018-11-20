@@ -6,8 +6,9 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import cn.hjf.tmcrm.Image;
 import cn.hjf.tmcrm.R;
+import cn.hjf.tmcrm.attachment.Attachment;
+import cn.hjf.tmcrm.attachment.DeletableAttachmentAdapter;
 import cn.hjf.tmcrm.widget.ExpandAllGridView;
 
 import java.util.ArrayList;
@@ -16,11 +17,11 @@ import java.util.List;
 public class CustomerInfoView {
 
 	public interface EventListener {
-		void onChooseImage();
+		void onChooseAttachment();
 
-		void onClickImage(Image image);
+		void onClickAttachment(Attachment attachment);
 
-		void onDeleteImage(Image image);
+		void onDeleteAttachment(Attachment image);
 	}
 
 	private final Context mContext;
@@ -30,8 +31,8 @@ public class CustomerInfoView {
 	private EditText mEtId;
 	private Button mBtnAddIdImage;
 	private ExpandAllGridView mEgvIdCardImage;
-	private IdCardImageAdapter mImageAdapter;
-	private List<Image> mImageList;
+	private DeletableAttachmentAdapter mImageAdapter;
+	private List<Attachment> mImageList;
 
 	private EventListener mEventListener;
 
@@ -82,13 +83,13 @@ public class CustomerInfoView {
 
 		mEgvIdCardImage = mRootView.findViewById(R.id.egv_customer_id_card);
 		mImageList = new ArrayList<>();
-		mImageAdapter = new IdCardImageAdapter(mContext, mImageList);
+		mImageAdapter = new DeletableAttachmentAdapter(mContext, mImageList);
 		mEgvIdCardImage.setAdapter(mImageAdapter);
-		mImageAdapter.setOnEventListener(new IdCardImageAdapter.OnEventListener() {
+		mImageAdapter.setOnEventListener(new DeletableAttachmentAdapter.OnEventListener() {
 			@Override
 			public void onClick(int position) {
 				if (mEventListener != null) {
-					mEventListener.onClickImage(mImageList.get(position));
+					mEventListener.onClickAttachment(mImageList.get(position));
 				}
 
 			}
@@ -96,7 +97,7 @@ public class CustomerInfoView {
 			@Override
 			public void onDelete(int position) {
 				if (mEventListener != null) {
-					mEventListener.onDeleteImage(mImageList.get(position));
+					mEventListener.onDeleteAttachment(mImageList.get(position));
 				}
 			}
 		});
@@ -106,7 +107,7 @@ public class CustomerInfoView {
 			@Override
 			public void onClick(View v) {
 				if (mEventListener != null) {
-					mEventListener.onChooseImage();
+					mEventListener.onChooseAttachment();
 				}
 			}
 		});

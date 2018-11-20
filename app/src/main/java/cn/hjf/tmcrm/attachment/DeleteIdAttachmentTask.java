@@ -1,14 +1,13 @@
-package cn.hjf.tmcrm.customer;
+package cn.hjf.tmcrm.attachment;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import cn.hjf.tmcrm.Image;
 import cn.hjf.tmcrm.oss.IDeleteObjectCallback;
 import cn.hjf.tmcrm.oss.TencentOSS;
 import cn.hjf.tmcrm.storage.FileStorage;
 import cn.hjf.tmcrm.util.FileUtil;
 
-public class DeleteIdCardImageTask extends AsyncTask<Image, Void, Void> {
+public class DeleteIdAttachmentTask extends AsyncTask<Attachment, Void, Void> {
 
 	public interface Callback {
 		void onStart();
@@ -25,7 +24,7 @@ public class DeleteIdCardImageTask extends AsyncTask<Image, Void, Void> {
 
 	private Callback mCallback;
 
-	public DeleteIdCardImageTask(Context context) {
+	public DeleteIdAttachmentTask(Context context) {
 		mContext = context;
 
 		mFileStorage = new FileStorage(context);
@@ -33,16 +32,16 @@ public class DeleteIdCardImageTask extends AsyncTask<Image, Void, Void> {
 	}
 
 	@Override
-	protected Void doInBackground(Image... images) {
+	protected Void doInBackground(Attachment... attachments) {
 		if (mCallback != null) {
 			mCallback.onStart();
 		}
 
-		Image image = images[0];
+		Attachment attachment = attachments[0];
 
-		FileUtil.delete(image.getLocalPath());
+		FileUtil.delete(attachment.getFilePath());
 
-		mTencentOSS.deleteObject(image.getUrl(), new IDeleteObjectCallback() {
+		mTencentOSS.deleteObject(attachment.getUrl(), new IDeleteObjectCallback() {
 			@Override
 			public void onSuccess() {
 				if (mCallback != null) {

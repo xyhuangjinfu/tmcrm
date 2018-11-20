@@ -1,7 +1,7 @@
 package cn.hjf.tmcrm.customer;
 
 import cn.hjf.tmcrm.BizModel;
-import cn.hjf.tmcrm.Image;
+import cn.hjf.tmcrm.attachment.Attachment;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class Customer extends BizModel {
 
 	private String mName;
 	private String mId;
-	private List<Image> mIdCardImageList;
+	private List<Attachment> mIdCardImageList;
 
 	public String getName() {
 		return mName;
@@ -27,11 +27,11 @@ public class Customer extends BizModel {
 		mId = id;
 	}
 
-	public List<Image> getIdCardImageList() {
+	public List<Attachment> getIdCardImageList() {
 		return mIdCardImageList;
 	}
 
-	public void setIdCardImageList(List<Image> idCardImageList) {
+	public void setIdCardImageList(List<Attachment> idCardImageList) {
 		mIdCardImageList = idCardImageList;
 	}
 }

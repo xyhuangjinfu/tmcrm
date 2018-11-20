@@ -1,9 +1,10 @@
-package cn.hjf.tmcrm.customer;
+package cn.hjf.tmcrm.attachment;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import cn.hjf.tmcrm.Image;
 import cn.hjf.tmcrm.oss.IPutObjectCallback;
 import cn.hjf.tmcrm.oss.TencentOSS;
 import cn.hjf.tmcrm.storage.FileStorage;
@@ -12,12 +13,12 @@ import cn.hjf.tmcrm.util.FileUtil;
 import java.io.File;
 import java.util.UUID;
 
-public class UploadIdCardImageTask extends AsyncTask<Uri, Integer, Void> {
+public class UploadAttachmentTask extends AsyncTask<Intent, Integer, Void> {
 
 	public interface Callback {
 		void onStart();
 
-		void onSuccess(Image image);
+		void onSuccess(Attachment attachment);
 
 		void onFail(Throwable error);
 
@@ -31,7 +32,7 @@ public class UploadIdCardImageTask extends AsyncTask<Uri, Integer, Void> {
 
 	private Callback mCallback;
 
-	public UploadIdCardImageTask(Context context) {
+	public UploadAttachmentTask(Context context) {
 		mContext = context;
 
 		mFileStorage = new FileStorage(context);
@@ -39,13 +40,18 @@ public class UploadIdCardImageTask extends AsyncTask<Uri, Integer, Void> {
 	}
 
 	@Override
-	protected Void doInBackground(Uri... uris) {
+	protected Void doInBackground(Intent... intents) {
 		//启动
 		if (mCallback != null) {
 			mCallback.onStart();
 		}
 
-		Uri uri = uris[0];
+		final Intent intent = intents[0];
+		final Uri uri = intent.getData();
+
+		ContentResolver cr = mContext.getContentResolver();
+		final String mimeType = cr.getType(uri);
+
 		//复制到本地目录
 		final String path = new File(FileStorage.PATH_ID_CARD_IMAGE, "temp").getAbsolutePath();
 		if (!mFileStorage.copyFromUri(uri, path)) {
@@ -77,11 +83,12 @@ public class UploadIdCardImageTask extends AsyncTask<Uri, Integer, Void> {
 					mCallback.onProgress(300, 300);
 				}
 
-				Image image = new Image();
-				image.setUrl(objectUrl);
-				image.setLocalPath(realPath);
+				Attachment attachment = new Attachment();
+				attachment.setUrl(objectUrl);
+				attachment.setFilePath(realPath);
+				attachment.setMimeType(mimeType);
 				if (mCallback != null) {
-					mCallback.onSuccess(image);
+					mCallback.onSuccess(attachment);
 				}
 			}
 

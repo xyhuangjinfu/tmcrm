@@ -1,7 +1,7 @@
 package cn.hjf.tmcrm.customer;
 
 import android.content.Context;
-import cn.hjf.tmcrm.Image;
+import cn.hjf.tmcrm.attachment.Attachment;
 import cn.hjf.tmcrm.storage.BaseStorage;
 import cn.hjf.tmcrm.storage.IStorageCallback;
 import com.avos.avoscloud.AVException;
@@ -39,8 +39,8 @@ public class CustomerStorage extends BaseStorage {
 
 		if (customer.getIdCardImageList() != null) {
 			List<String> imageUrlList = new ArrayList<>();
-			for (Image image : customer.getIdCardImageList()) {
-				imageUrlList.add(image.getUrl());
+			for (Attachment attachment : customer.getIdCardImageList()) {
+				imageUrlList.add(attachment.getUrl());
 			}
 			avObject.put("id_image_urls", imageUrlList);
 		}
