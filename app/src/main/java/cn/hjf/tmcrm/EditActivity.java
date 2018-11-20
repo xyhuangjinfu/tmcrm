@@ -5,14 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import cn.hjf.tmcrm.oss.TencentOSS;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URI;
 
 public class EditActivity extends BaseActivity {
 
@@ -24,7 +22,7 @@ public class EditActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit);
 
-		new TencentOSS(this).getObject("xxxx");
+//		new TencentOSS(this).getObject("xxxx");
 
 //		mBtnAddAccessory = findViewById(R.id.btn_add_accessory);
 //
@@ -55,7 +53,7 @@ public class EditActivity extends BaseActivity {
 		String path = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "zzzzzzzzzz").getAbsolutePath();
 		//copy
 		if (copy(data.getData(), path)) {
-			new TencentOSS(this).putObject(path);
+			new TencentOSS(this).putObject(path, null);
 		}
 	}
 
